@@ -10,7 +10,6 @@
     <meta-data android:name="google_analytics_default_allow_ad_personalization_signals" android:value="true" />
 
     <application
-            android:name=".App"
             android:allowBackup="true"
             android:dataExtractionRules="@xml/data_extraction_rules"
             android:fullBackupContent="@xml/backup_rules"

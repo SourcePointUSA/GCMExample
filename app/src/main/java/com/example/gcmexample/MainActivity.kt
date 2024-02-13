@@ -62,6 +62,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        firebaseAnalytics = Firebase.analytics
         setContent {
             GCMExampleTheme {
                 // A surface container using the 'background' color from the theme
@@ -110,11 +111,11 @@ class MainActivity : ComponentActivity() {
             val gcmData = sPConsents.gdpr?.consent?.googleConsentMode
             val consentMap = mapOf(
                 ConsentType.ANALYTICS_STORAGE to if(gcmData?.analyticsStorage == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED,
-                ConsentType.AD_STORAGE to if(gcmData?.analyticsStorage == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED,
-                ConsentType.AD_USER_DATA to if(gcmData?.analyticsStorage == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED,
-                ConsentType.AD_PERSONALIZATION to if(gcmData?.analyticsStorage == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED
+                ConsentType.AD_STORAGE to if(gcmData?.adStorage == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED,
+                ConsentType.AD_USER_DATA to if(gcmData?.adUserData == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED,
+                ConsentType.AD_PERSONALIZATION to if(gcmData?.adPersonalization == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED
             )
-            Firebase.analytics.setConsent(consentMap)
+            firebaseAnalytics.setConsent(consentMap)
 
             Log.i(this::class.java.name, "onSpFinish: $sPConsents")
             Log.i(this::class.java.name, "==================== onSpFinish ==================")
