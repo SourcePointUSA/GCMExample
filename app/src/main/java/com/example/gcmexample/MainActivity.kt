@@ -46,9 +46,9 @@ class MainActivity : ComponentActivity() {
         activity = this@MainActivity
         spClient = LocalClient()
         config {
-            accountId = 22
-            propertyName = "mobile.multicampaign.demo"
-            propertyId = 16893
+            accountId = 1772
+            propertyName = "gcm.google.com"
+            propertyId = 21814
             messLanguage = MessageLanguage.ENGLISH
             campaignsEnv = CampaignsEnv.PUBLIC
             +(CampaignType.GDPR)
@@ -57,6 +57,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        executeLoadMessage()
+    }
+
+    private fun executeLoadMessage(){
         spConsentLib.loadMessage()
     }
 
@@ -69,8 +73,9 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     Greeting("CMP")
                     Buttons(
-                        "Review Preferences" to { spConsentLib.loadPrivacyManager("488393", CampaignType.GDPR) },
+                        "Review Preferences" to { spConsentLib.loadPrivacyManager("563002", CampaignType.GDPR) },
                         "Clear Preferences" to { clearAllData(this) },
+                        "Load Message" to { executeLoadMessage() },
                     )
                 }
             }
@@ -108,13 +113,13 @@ class MainActivity : ComponentActivity() {
         }
 
         override fun onSpFinished(sPConsents: SPConsents) {
+
             val gcmData = sPConsents.gdpr?.consent?.googleConsentMode
-            val consentMap = mapOf(
-                ConsentType.ANALYTICS_STORAGE to if(gcmData?.analyticsStorage == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED,
-                ConsentType.AD_STORAGE to if(gcmData?.adStorage == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED,
-                ConsentType.AD_USER_DATA to if(gcmData?.adUserData == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED,
-                ConsentType.AD_PERSONALIZATION to if(gcmData?.adPersonalization == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED
-            )
+            val consentMap = mutableMapOf<ConsentType, ConsentStatus>()
+            gcmData?.analyticsStorage?.let { consentMap.put(ConsentType.ANALYTICS_STORAGE,  if(it == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED) }
+            gcmData?.adStorage?.let { consentMap.put(ConsentType.AD_STORAGE,  if(it == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED) }
+            gcmData?.adUserData?.let { consentMap.put(ConsentType.AD_USER_DATA,  if(it == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED) }
+            gcmData?.adPersonalization?.let { consentMap.put(ConsentType.AD_PERSONALIZATION,  if(it == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED) }
             firebaseAnalytics.setConsent(consentMap)
 
             Log.i(this::class.java.name, "onSpFinish: $sPConsents")
