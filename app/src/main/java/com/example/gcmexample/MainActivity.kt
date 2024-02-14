@@ -47,8 +47,8 @@ class MainActivity : ComponentActivity() {
         spClient = LocalClient()
         config {
             accountId = 1772
-            propertyName = "gcm.google.com"
-            propertyId = 21814
+            propertyName = "tpi-test-space.web.app"
+            propertyId = 21930
             messLanguage = MessageLanguage.ENGLISH
             campaignsEnv = CampaignsEnv.PUBLIC
             +(CampaignType.GDPR)
@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     Greeting("CMP")
                     Buttons(
-                        "Review Preferences" to { spConsentLib.loadPrivacyManager("563002", CampaignType.GDPR) },
+                        "Review Preferences" to { spConsentLib.loadPrivacyManager("674747", CampaignType.GDPR) },
                         "Clear Preferences" to { clearAllData(this) },
                         "Load Message" to { executeLoadMessage() },
                     )
