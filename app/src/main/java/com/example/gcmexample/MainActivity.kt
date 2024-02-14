@@ -5,22 +5,20 @@ import android.util.Log
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gcmexample.ui.theme.GCMExampleTheme
 import com.google.firebase.Firebase
-import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.FirebaseAnalytics.ConsentStatus
 import com.google.firebase.analytics.FirebaseAnalytics.ConsentType
@@ -55,6 +53,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private var helloCmpText by mutableStateOf("Hello CMP")
+    private var IABTCF_TCString by mutableStateOf("")
+    private var IABTCF_EnableAdvertiserConsentMode by mutableStateOf("")
+
     override fun onResume() {
         super.onResume()
         executeLoadMessage()
@@ -71,12 +73,36 @@ class MainActivity : ComponentActivity() {
             GCMExampleTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Greeting("CMP")
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(text = """
+                            IABTCF_EnableAdvertiserConsentMode
+                            
+                            $IABTCF_EnableAdvertiserConsentMode
+                            
+                        """.trimIndent())
+                        Text(text = """
+                            IABTCF_TCString
+                            
+                            $IABTCF_TCString
+                            
+                        """.trimIndent())
+                    }
                     Buttons(
                         "Review Preferences" to { spConsentLib.loadPrivacyManager("674747", CampaignType.GDPR) },
-                        "Clear Preferences" to { clearAllData(this) },
+                        "Clear Preferences" to {
+                            clearAllData(this)
+                            IABTCF_EnableAdvertiserConsentMode = ""
+                            IABTCF_TCString = ""
+                                               },
                         "Load Message" to { executeLoadMessage() },
                     )
+
                 }
             }
         }
@@ -122,6 +148,9 @@ class MainActivity : ComponentActivity() {
             gcmData?.adPersonalization?.let { consentMap.put(ConsentType.AD_PERSONALIZATION,  if(it == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED) }
             firebaseAnalytics.setConsent(consentMap)
 
+            IABTCF_EnableAdvertiserConsentMode = sPConsents.gdpr?.consent?.tcData?.get("IABTCF_EnableAdvertiserConsentMode").toString()
+            IABTCF_TCString = sPConsents.gdpr?.consent?.tcData?.get("IABTCF_TCString").toString()
+
             Log.i(this::class.java.name, "onSpFinish: $sPConsents")
             Log.i(this::class.java.name, "==================== onSpFinish ==================")
         }
@@ -132,14 +161,6 @@ class MainActivity : ComponentActivity() {
 
         override fun onMessageReady(message: JSONObject) {}
     }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
 }
 
 @Composable
@@ -156,13 +177,5 @@ fun Buttons(vararg buttons: Pair<String, () -> Unit>) {
                 Text(text = text)
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    GCMExampleTheme {
-        Greeting("Android")
     }
 }
