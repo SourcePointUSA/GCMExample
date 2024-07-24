@@ -1,4 +1,4 @@
-package com.example.gcmexample
+package com.sourcepoint.android.gcmexample
 
 import org.junit.Test
 

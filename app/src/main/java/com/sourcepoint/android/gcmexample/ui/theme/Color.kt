@@ -1,4 +1,4 @@
-package com.example.gcmexample.ui.theme
+package com.sourcepoint.android.gcmexample.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

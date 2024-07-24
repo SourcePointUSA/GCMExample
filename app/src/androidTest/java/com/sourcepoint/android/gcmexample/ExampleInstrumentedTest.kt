@@ -1,4 +1,4 @@
-package com.example.gcmexample
+package com.sourcepoint.android.gcmexample
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

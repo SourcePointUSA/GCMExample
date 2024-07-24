@@ -1,4 +1,4 @@
-package com.example.gcmexample
+package com.sourcepoint.android.gcmexample
 
 import android.os.Bundle
 import android.util.Log
@@ -17,7 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.gcmexample.ui.theme.GCMExampleTheme
+import com.sourcepoint.android.gcmexample.ui.theme.GCMExampleTheme
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.FirebaseAnalytics.ConsentStatus
@@ -53,7 +53,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private var helloCmpText by mutableStateOf("Hello CMP")
     private var IABTCF_TCString by mutableStateOf("")
     private var IABTCF_EnableAdvertiserConsentMode by mutableStateOf("")
 
@@ -82,13 +81,11 @@ class MainActivity : ComponentActivity() {
                     ) {
                         Text(text = """
                             IABTCF_EnableAdvertiserConsentMode
-                            
                             $IABTCF_EnableAdvertiserConsentMode
                             
                         """.trimIndent())
                         Text(text = """
                             IABTCF_TCString
-                            
                             $IABTCF_TCString
                             
                         """.trimIndent())
@@ -139,13 +136,12 @@ class MainActivity : ComponentActivity() {
         }
 
         override fun onSpFinished(sPConsents: SPConsents) {
-
             val gcmData = sPConsents.gdpr?.consent?.googleConsentMode
             val consentMap = mutableMapOf<ConsentType, ConsentStatus>()
             gcmData?.analyticsStorage?.let { consentMap.put(ConsentType.ANALYTICS_STORAGE,  if(it == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED) }
-            gcmData?.adStorage?.let { consentMap.put(ConsentType.AD_STORAGE,  if(it == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED) }
-            gcmData?.adUserData?.let { consentMap.put(ConsentType.AD_USER_DATA,  if(it == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED) }
-            gcmData?.adPersonalization?.let { consentMap.put(ConsentType.AD_PERSONALIZATION,  if(it == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED) }
+            gcmData?.adStorage?.let { consentMap.put(ConsentType.AD_STORAGE, if(it == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED) }
+            gcmData?.adUserData?.let { consentMap.put(ConsentType.AD_USER_DATA, if(it == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED) }
+            gcmData?.adPersonalization?.let { consentMap.put(ConsentType.AD_PERSONALIZATION, if(it == GCMStatus.GRANTED) ConsentStatus.GRANTED else ConsentStatus.DENIED) }
             firebaseAnalytics.setConsent(consentMap)
 
             IABTCF_EnableAdvertiserConsentMode = sPConsents.gdpr?.consent?.tcData?.get("IABTCF_EnableAdvertiserConsentMode").toString()
@@ -159,6 +155,7 @@ class MainActivity : ComponentActivity() {
             Log.i(this::class.java.name, "onConsentReady: $consent")
         }
 
+        @Deprecated("onMessageReady callback will be removed in favor of onUIReady. Currently this callback is disabled.")
         override fun onMessageReady(message: JSONObject) {}
     }
 }
